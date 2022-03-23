@@ -22,27 +22,28 @@ exports.getEditProduct = (req,res,next) => {
 
     const proId = req.params.productId
     Product.findById(proId)
-    .then(([rowData, fieldData]) => {
+    .then((product) => {
         res.render('shop/add-edit-product.ejs', {
             pageTitle: 'Edit Product',
             editing: editMode,
-            product: rowData[0]
+            product: product
         })
     })
 }
 
 exports.postEditProduct = (req,res,next) => {
 
-    const {title, imageUrl,description,price} = req.body
+    const {productId, title, imageUrl,description,price} = req.body
     const updatedProduct = new Product( title, imageUrl,description,price)
-
-    updatedProduct.edit()
-    res.redirect('/')
+    updatedProduct.edit(productId).then(() => res.redirect('/')).catch(err=> console.log(err))
+    
 }
 
 exports.postDeleteProduct = ( req,res,next) => {
 
     const prodId = req.body.productId
-    Product.deleteById(prodId)
-    res.redirect('/')
+    Product.deleteById(prodId).then(() => {
+        res.redirect('/')
+    }).catch((err) => console.log(err))
+
 }

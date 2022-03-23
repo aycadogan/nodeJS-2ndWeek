@@ -16,12 +16,19 @@ module.exports = class Products{
         return db.collection('products').insertOne(this)
     }
 
-    edit(){
+    edit(id){
         // return db.execute('UPDATE products SET title=?, description=?, imageUrl=?, price=? WHERE id=?', [this.title,this.description,this.imageUrl,this.price,this.id])
+        
+        const db = getDB()
+        const objectId = new mongodb.ObjectId(id)
+        return db.collection('products').updateOne({ _id:objectId }, {$set:this })
     }
 
     static deleteById(id){
         // return db.execute('DELETE FROM products WHERE products.id = ?', [id])
+        const db = getDB()
+        const objectId = new mongodb.ObjectId(id)
+        return db.collection('products').deleteOne({_id: objectId })
     }
 
     //fetch all products

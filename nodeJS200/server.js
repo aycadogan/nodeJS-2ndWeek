@@ -17,7 +17,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use('/admin', adminRoute)
 app.use(shopRoute)
 
-const PORT = process.env.PORT || 8003
+const PORT = process.env.PORT || 8004
 // app.listen(PORT)
 
 mongoConnect(() => {
