@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="/css/forms.css">
 </head>
 <body>
-    <textarea%- include('../includes/nav.ejs') %>
+    <%- include('../includes/nav.ejs') %>
     <h1>Editing mode: <%= editing %></h1>
     <main>
         <form class="product-form" action="<% if(editing) { %>/edit-product <% }else{ %>/add-product<% } %>" method="post">

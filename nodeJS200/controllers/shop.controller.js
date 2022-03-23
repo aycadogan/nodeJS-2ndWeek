@@ -20,6 +20,20 @@ exports.getAddProduct = (req,res,next) => {
     })
 }
 
+exports.getProductById = (req,res,next) => {
+    const prodId = req.params.productId
+    Product.findById(prodId)
+     .then(([rowData, fieldData]) => {
+        //  console.log(rowData[0].title);
+         res.render('shop/product-detail.ejs',{
+             pageTitle: rowData[0].title,
+             product: rowData[0]
+         })
+     })
+     .catch(err => console.log(err))
+    
+}
+
 exports.postAddProduct = (req,res,next) => {
     const { title, imageUrl, description, price} = req.body
     
@@ -51,3 +65,11 @@ exports.postEditProduct = (req,res,next) => {
     updatedProduct.edit()
     res.redirect('/')
 }
+
+exports.postDeleteProduct = ( req,res,next) => {
+
+    const prodId = req.body.productId
+    Product.deleteById(prodId)
+    res.redirect('/')
+}
+

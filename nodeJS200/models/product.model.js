@@ -18,6 +18,10 @@ module.exports = class Products{
         return db.execute('UPDATE products SET title=?, description=?, imageUrl=?, price=? WHERE id=?', [this.title,this.description,this.imageUrl,this.price,this.id])
     }
 
+    static deleteById(id){
+        return db.execute('DELETE FROM products WHERE products.id = ?', [id])
+    }
+
     //fetch all products
     static fetchAll(){
         return db.execute('SELECT * FROM products')
