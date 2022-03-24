@@ -7,8 +7,10 @@
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
-  "nodemonConfig":{
-    "ignore":["data/*"]
+  "nodemonConfig": {
+    "ignore": [
+      "data/*"
+    ]
   },
   "keywords": [],
   "author": "",
@@ -22,6 +24,7 @@
     "ejs": "^3.1.6",
     "express": "^4.17.3",
     "mongodb": "^4.4.1",
+    "mongoose": "^6.2.8",
     "mysql2": "^2.3.3"
   }
 }
