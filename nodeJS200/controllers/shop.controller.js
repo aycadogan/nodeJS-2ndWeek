@@ -12,7 +12,9 @@ exports.getProducts = (req,res,next) => {
 // }).catch(err=> console.log(err))
 
     Product.fetchAll().then((products)=> {
-        console.log(products);
+
+    
+        
     res.render('shop/product-list.ejs', {
         pageTitle: 'All Products',
         products: products
@@ -63,7 +65,7 @@ exports.getCart = (req,res,next) => {
                 }
             }
 
-            res.render('shop/cart', {
+            res.render('shop/cart.ejs', {
                 pageTitle: 'Your Cart',
                 products: cartProducts,
                 totalPrice: cart.totalPrice
