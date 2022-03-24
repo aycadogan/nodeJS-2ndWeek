@@ -1,18 +1,18 @@
 <%- include('../includes/head.ejs') %>
-
 <body>
     <%- include('../includes/nav.ejs') %>
-    <main class="container">
-        <h1>
+
+    <main class="container mt-6">
+        <h1 class="title">
             <%= product.title %>
         </h1>
         <div class="block">
             <img src="/<%= product.imageUrl %>" alt="<%= product.title %>">
         </div>
         <div class="block">
-            <h3><%= product.price %></h3>
+            <h3 class="subtitle"><%= product.price %></h3>
             <p>
-                <%= product.description%>
+                <%= product.description %>
             </p>
         </div>
     </main>
