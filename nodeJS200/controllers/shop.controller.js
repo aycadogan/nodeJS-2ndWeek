@@ -12,9 +12,7 @@ exports.getProducts = (req,res,next) => {
 // }).catch(err=> console.log(err))
 
     Product.fetchAll().then((products)=> {
-
-    
-        
+  
     res.render('shop/product-list.ejs', {
         pageTitle: 'All Products',
         products: products

@@ -2,15 +2,14 @@ const Product = require('../models/product.model')
 
 exports.getAllProducts = (req,res,next) => {
 
-    Product.fetchAll().then(products => {
+    Product.fetchAll().then((products)=> {
+  
         res.render('admin/products.ejs', {
-            pageTitle: 'Admin - All Products',
+            pageTitle: 'All Products',
             products: products
         })
-    })
-    .catch(err => console.log(err))
+        }).catch(err=> console.log(err))
 }
-
 
 exports.getAddProduct = (req,res,next) => {
     res.render('shop/add-edit-product.ejs', {
