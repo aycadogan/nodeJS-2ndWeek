@@ -1,83 +1,91 @@
 const Product = require('../models/product.model')
 const Cart = require('../models/cart.model')
 
+const getById = (productId) => {
+
+    return Product.findById(productId, (err,data) => {
+        if(err) console.log(err)
+        return data
+    }).clone()
+}
+
 exports.getProducts = (req,res,next) => {
 
-//     Product.fetchAll().then(([rowData, fieldData])=> {
-//         // console.log(rowData)
-//     res.render('shop/product-list.ejs', {
-//         pageTitle: 'All Products',
-//         products: rowData
-//     })
-// }).catch(err=> console.log(err))
+    Product.find((err,data) => {
 
-    Product.fetchAll().then((products)=> {
-  
-    res.render('shop/product-list.ejs', {
-        pageTitle: 'All Products',
-        products: products
+        if(err) console.log(err)
+        res.render('shop/product-list.ejs', {
+            pageTitle: 'Home - All Products',
+            products:data
+        })
     })
-    }).catch(err=> console.log(err))
 }
 
-exports.getProductById = (req,res,next) => {
-    const prodId = req.params.productId
-    Product.findById(prodId)
-     .then((product) => {
-        //  console.log(rowData[0].title);
-         res.render('shop/product-detail.ejs',{
-             pageTitle: product.title,
-             product: product
-         })
-     })
-     .catch(err => console.log(err))
+exports.getProductById = async (req,res,next) => {
+    const {params:{productId}} =req
     
+    const product = await getById(productId)
+    // console.log(product);
+    res.render('shop/product-detail.ejs',{
+        pageTitle: product.title,
+        product: product
+    })
 }
 
-exports.postCart = (req,res,next) => {
+exports.postCart = async (req,res,next) => {
 
     const {productId} = req.body
 
-    Product.findById(productId).then(product => {
-        Cart.addProduct(productId, product.price);
-        res.redirect('/cart');
-
-    }).catch(err => console.log(err))
-
+    const product = await getById(productId)
+    await req.user.addToCart(product)
+    res.redirect('/cart');
 }
 
-exports.getCart = (req,res,next) => {
-    Cart.getCart((cart) => {
-        Product.fetchAll().then((products) => {
-            const cartProducts = []
+exports.getCart = async (req,res,next) => {
+    
+    req.user.populate('cart.items.productId').then((user) => {
+        
+        const products = user.cart.items
+        console.log(products);
 
-            for(p of products){
-                const cartProductData = cart.products.find(cartProd => cartProd.id === p._id.toString())
-
-                
-                if(cartProductData){
-                    cartProducts.push({
-                        productData: p,
-                        quantity: cartProductData.quantity
-                    })
-                }
-            }
-
-            res.render('shop/cart.ejs', {
-                pageTitle: 'Your Cart',
-                products: cartProducts,
-                totalPrice: cart.totalPrice
-            })
-        }).catch(err => console.log(err))
+        res.render('shop/cart.ejs', {
+        pageTitle: 'Your Cart',
+        products: products,
+        totalPrice: products.reduce((acc, curr) => acc + curr.quantity * curr.productId.price,
+        0)
+    })
     })
 
+    //Alternative Solution
+    // const cartItems= req.user.cart.items
+
+    // const mappedCart = await Promise.all((cartItems.map( async (ci) => {
+    //     const product = {}
+    //     const productDetail = await getById(ci.productId)
+
+    //     product.title = productDetail.title
+    //     product.imageUrl = productDetail.imageUrl
+    //     product.description = productDetail.description
+    //     product.price = productDetail.price
+    //     product.id = ci.id
+    //     product.quantity = ci.quantity
+    //     product.subTotal = ci.quantity * productDetails.price
+
+    //     return product
+    // })))
+
+    // res.render('shop/cart.ejs', {
+    //     pageTitle: 'Your Cart',
+    //     products: mappedCart,
+    //     totalPrice: mappedCart.reduce((acc,curr) => acc + curr.subTotal, 0)
+    // })
+
 }
 
-exports.postCartDeleteProduct = (req,res,next) => {
+exports.postCartDeleteProduct = async (req,res,next) => {
     const {productId} = req.body
-
-    Product.findById(productId).then((product) => {
-        Cart.deleteProduct(productId, product.price)
+    req.user.removeFromCart(productId).then(() => {
         res.redirect('/cart')
-    }).catch(err => console.log(err))
+    });
+    
 }

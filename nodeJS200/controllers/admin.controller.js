@@ -1,59 +1,67 @@
 const Product = require('../models/product.model')
 
-exports.getAllProducts = (req,res,next) => {
-
-    Product.fetchAll().then((products)=> {
-  
-        res.render('admin/products.ejs', {
-            pageTitle: 'All Products',
-            products: products
-        })
-        }).catch(err=> console.log(err))
+const getById = (productId) => {
+    return Product.findById(productId, (err, data) => {
+        if(err) console.log(err)
+        return data
+    }).clone()
 }
 
-exports.getAddProduct = (req,res,next) => {
-    res.render('shop/add-edit-product.ejs', {
-        pageTitle: 'Add Product',
-        editing: false
+exports.getAllProducts = (req, res, next) => {
+  Product.find((err, products) => {
+    if (err) console.log(err)
+
+    res.render('admin/products.ejs', {
+      pageTitle: 'All Products',
+      products: products,
+      isAuth: req.user,
     })
+  })
 }
 
-exports.postAddProduct = (req,res,next) => {
-    const { title, imageUrl, description, price} = req.body
-    
-    const product = new Product(title, imageUrl, description, price)
-    product.save()
+exports.getAddProduct = (req, res, next) => {
+  res.render('shop/add-edit-product.ejs', {
+    pageTitle: 'Add Product',
+    editing: false,
+  })
+}
+
+exports.postAddProduct = async(req, res, next) => {
+  const { title, imageUrl, description, price } = req.body
+
+  const product = new Product({ title, imageUrl, description, price, userId: req.user })
+  await product.save()
+  res.redirect('/')
+}
+
+exports.getEditProduct = async(req, res, next) => {
+  const editMode = req.query.edit
+  if (!editMode) res.redirect('/')
+
+  const { productId } = req.params
+  const product = await getById(productId)
+
+  res.render('shop/add-edit-product.ejs', {
+    pageTitle: 'Edit Product',
+    editing: editMode,
+    product: product,
+  })
+}
+
+exports.postEditProduct = async(req, res, next) => {
+    const { productId, title, imageUrl, description, price } = req.body
+
+    const product = await getById(productId)
+  
+    product.title = title
+    product.imageUrl = imageUrl
+    product.description = description
+    product.price = price
+  
+    await product.save()
     res.redirect('/')
 }
 
-exports.getEditProduct = (req,res,next) => {
-    const editMode = req.query.edit
-    if(!editMode) res.redirect('/')
-
-    const proId = req.params.productId
-    Product.findById(proId)
-    .then((product) => {
-        res.render('shop/add-edit-product.ejs', {
-            pageTitle: 'Edit Product',
-            editing: editMode,
-            product: product
-        })
-    })
-}
-
-exports.postEditProduct = (req,res,next) => {
-
-    const {productId, title, imageUrl,description,price} = req.body
-    const updatedProduct = new Product( title, imageUrl,description,price)
-    updatedProduct.edit(productId).then(() => res.redirect('/')).catch(err=> console.log(err))
-    
-}
-
-exports.postDeleteProduct = ( req,res,next) => {
-
-    const prodId = req.body.productId
-    Product.deleteById(prodId).then(() => {
-        res.redirect('/')
-    }).catch((err) => console.log(err))
+exports.postDeleteProduct = (req, res, next) => {
 
 }

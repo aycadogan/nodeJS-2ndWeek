@@ -1,3 +1,4 @@
+
 <%- include('../includes/head.ejs') %>
 <body>
     <%- include('../includes/nav.ejs') %>
@@ -21,15 +22,15 @@
                 <tr>
                     <td>
                         <figure class="image is-4by3">
-                            <img src="<%= product.productData.imageUrl%>">
+                            <img src="<%= product.productId.imageUrl%>">
                           </figure>
                     </td>
-                    <td><%= product.productData.title%></p></td>
+                    <td><%= product.productId.title%></p></td>
                     <td><p class="subtitle is-6"><%= product.quantity %></p> </td>
-                    <td>$<%= product.productData.price %></p></td>
+                    <td>$<%= product.productId.price %></p></td>
                     <td class="has-text-right">
                         <form action="/cart-delete-item" method="POST">
-                            <input type="hidden" name="productId" value="<%= product.productData._id %>" />
+                            <input type="hidden" name="productId" value="<%= product.id %>" />
                             <button class="button is-danger is-light" type="submit">Delete</button>
                         </form>
                     </td>
